@@ -1,49 +1,29 @@
+from itertools import product
+
 with open('input','r') as f:
 	lines=f.read().split('\n')
 	lines.pop()
 
-bas=[]
-for i,l in enumerate(lines):
-	for j,n in enumerate(l):
-		top=-1 if i==0 else lines[i-1][j]
-		bottom=-1 if i==len(lines)-1 else lines[i+1][j]
-		left=-1 if j==0 else l[j-1]
-		right=-1 if j==len(l)-1 else l[j+1]
+def _neighbours(cell,size):
+	for c in product(*(range(n-1, n+2) for n in cell)):
+		if c != cell and all(0 <= n < size for n in c):
+			yield c
 
-		adj=[]
-		if top!=-1:adj.append(top)
-		if bottom!=-1:adj.append(bottom)
-		if left!=-1:adj.append(left)
-		if right!=-1:adj.append(right)
+def neighbours(x,y,s):
+	return [(x+a[0], y+a[1]) for a in
+		[(-1,0), (1,0), (0,-1), (0,1)]
+		if ((0 <= x+a[0] < s) and (0 <= y+a[1] < s))]
 
-		a=0
-		for k in adj:
-			if int(n)<int(k):a+=1
-
-		if a==len(adj):
-			low.append([i,j])
-
-def reursive():
-	pass
-
-for i,l in enumerate(lines):
-	for j,n in enumerate(l):
-		if n==9:continue
-		top=-1 if i==0 else lines[i-1][j]
-		bottom=-1 if i==len(lines)-1 else lines[i+1][j]
-		left=-1 if j==0 else l[j-1]
-		right=-1 if j==len(l)-1 else l[j+1]
-
-		if top!=-1 and top<n:pass
-		if bottom!=-1:adj.append(bottom)
-		if left!=-1:adj.append(left)
-		if right!=-1:adj.append(right)
-
-		#a=0
-		#for k in adj:
-		#	if int(n)<int(k):a+=1
-
-		#if a==len(adj):
-			#print(n)
-			#s+=int(n)+1
-print(s)
+basins={}
+for i in range(len(lines)):
+	for j in range(len(lines[i])):
+		if lines[i][j]=='9':continue
+		low_coords=[10,10]
+		lowest=10
+		for n in neighbours(i,j,len(lines)):
+			v=int(lines[n[0]][n[1]])
+			if v<lowest:
+				lowest=v
+				low_coords[0]=i
+				low_coords[1]=j
+		print(low_coords)
